@@ -1,4 +1,4 @@
-package com.omeric.android.latesttmdbmovies.activity
+package com.omeric.android.hearthisattoptracks.activity
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -7,7 +7,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import com.omeric.android.latesttmdbmovies.R
+import com.omeric.android.hearthisattoptracks.R
 import com.squareup.picasso.Picasso
 
 /**

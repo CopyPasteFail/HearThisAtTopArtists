@@ -1,4 +1,4 @@
-package com.omeric.android.latesttmdbmovies.adapter
+package com.omeric.android.hearthisattoptracks.adapter
 
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.RecyclerView
@@ -8,16 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.omeric.android.latesttmdbmovies.R
-import com.omeric.android.latesttmdbmovies.data.model.MovieModel
+import com.omeric.android.hearthisattoptracks.R
+import com.omeric.android.hearthisattoptracks.data.model.TrackModel
 import com.squareup.picasso.Picasso
 import android.content.Intent
-import com.omeric.android.latesttmdbmovies.activity.DetailsActivity
-import com.omeric.android.latesttmdbmovies.activity.MainActivity
+import com.omeric.android.hearthisattoptracks.activity.DetailsActivity
+import com.omeric.android.hearthisattoptracks.activity.MainActivity
 
 
 class MoviesAdapter(
-    private val movies: ArrayList<MovieModel>,
+    private val tracks: ArrayList<TrackModel>,
     private val rowLayout: Int
 ) : RecyclerView.Adapter<MoviesAdapter.MovieViewHolder>()
 {
@@ -52,38 +52,38 @@ class MoviesAdapter(
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int)
     {
 //        Log.d(TAG,"onBindViewHolder:")
-        if (movies[position].posterPath != null)
+        if (tracks[position].posterPath != null)
         {
-//            Log.d(TAG, "onBindViewHolder: posterUrl = ${MainActivity.BASE_URL_MOVIE_POSTER + movies[position].posterPath}")
+//            Log.d(TAG, "onBindViewHolder: posterUrl = ${MainActivity.BASE_URL_MOVIE_POSTER + tracks[position].posterPath}")
             Picasso
                 .get()
-                .load(MainActivity.BASE_URL_MOVIE_POSTER + movies[position].posterPath)
+                .load(MainActivity.BASE_URL_MOVIE_POSTER + tracks[position].posterPath)
                 .placeholder(android.R.drawable.sym_def_app_icon)
                 .error(android.R.drawable.stat_notify_error)
                 .into(holder.posterImage)
         }
         else {holder.posterImage.setImageResource(android.R.drawable.ic_menu_close_clear_cancel)}
 
-        holder.movieTitle.text = movies[position].originalTitle
-        holder.releaseDate.text = movies[position].releaseDate
+        holder.movieTitle.text = tracks[position].originalTitle
+        holder.releaseDate.text = tracks[position].releaseDate
 
         holder.movieItemLayout.setOnClickListener {
             it.context.startActivity(Intent(it.context, DetailsActivity::class.java)
-                .putExtra(DetailsActivity.INTENT_MOVIE_HOMEPAGE_URL, movies[position].homePageUrl)
-                .putExtra(DetailsActivity.INTENT_MOVIE_ID, movies[position].id)
-                .putExtra(DetailsActivity.INTENT_MOVIE_TITLE, movies[position].originalTitle)
-                .putExtra(DetailsActivity.INTENT_MOVIE_OVERVIEW, movies[position].overview)
-                .putExtra(DetailsActivity.INTENT_MOVIE_POPULARITY, movies[position].popularity)
-                .putExtra(DetailsActivity.INTENT_MOVIE_POSTER_PATH, movies[position].posterPath)
-                .putExtra(DetailsActivity.INTENT_MOVIE_RELEASE_DATE, movies[position].releaseDate)
-                .putExtra(DetailsActivity.INTENT_MOVIE_VOTE_AVERAGE, movies[position].voteAverage)
-                .putExtra(DetailsActivity.INTENT_MOVIE_VOTE_COUNT, movies[position].voteCount)
+                .putExtra(DetailsActivity.INTENT_MOVIE_HOMEPAGE_URL, tracks[position].homePageUrl)
+                .putExtra(DetailsActivity.INTENT_MOVIE_ID, tracks[position].id)
+                .putExtra(DetailsActivity.INTENT_MOVIE_TITLE, tracks[position].originalTitle)
+                .putExtra(DetailsActivity.INTENT_MOVIE_OVERVIEW, tracks[position].overview)
+                .putExtra(DetailsActivity.INTENT_MOVIE_POPULARITY, tracks[position].popularity)
+                .putExtra(DetailsActivity.INTENT_MOVIE_POSTER_PATH, tracks[position].posterPath)
+                .putExtra(DetailsActivity.INTENT_MOVIE_RELEASE_DATE, tracks[position].releaseDate)
+                .putExtra(DetailsActivity.INTENT_MOVIE_VOTE_AVERAGE, tracks[position].voteAverage)
+                .putExtra(DetailsActivity.INTENT_MOVIE_VOTE_COUNT, tracks[position].voteCount)
             )
         }
     }
 
     override fun getItemCount(): Int
     {
-        return movies.size
+        return tracks.size
     }
 }

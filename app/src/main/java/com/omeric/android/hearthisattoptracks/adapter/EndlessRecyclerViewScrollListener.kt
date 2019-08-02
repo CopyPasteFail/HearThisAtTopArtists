@@ -1,4 +1,4 @@
-package com.omeric.android.latesttmdbmovies.adapter
+package com.omeric.android.hearthisattoptracks.adapter
 
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
