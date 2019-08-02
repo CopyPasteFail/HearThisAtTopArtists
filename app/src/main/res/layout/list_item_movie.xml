@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/movie_item_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:minHeight="72dp"
+    android:background="@color/colorGrey900"
+    android:orientation="horizontal"
+    android:layout_margin="4dp"
+    android:padding="8dp">
+
+    <ImageView
+            android:id="@+id/poster_image_list_item"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintVertical_bias="0.5"
+            tools:ignore="ContentDescription"/>
+
+    <TextView
+            android:id="@+id/title_list_item"
+            android:textColor="@android:color/primary_text_dark"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            tools:text="Avenger: End Game"
+            android:textSize="16sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/poster_image_list_item"
+            android:layout_marginStart="8dp"/>
+
+    <TextView
+            android:id="@+id/TextVw_release_date_list_item"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            tools:text="2018-08-30"
+            app:layout_constraintStart_toEndOf="@+id/poster_image_list_item"
+            android:layout_marginStart="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/title_list_item"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guideline8_list_item"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5"/>
+
+</android.support.constraint.ConstraintLayout>
