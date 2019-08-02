@@ -1,7 +1,7 @@
-package com.omeric.android.hearthisattoptracks.data.remote
+package com.omeric.android.hearthisattopartists.data.remote
 
-import com.omeric.android.hearthisattoptracks.data.model.TrackModel
-import com.omeric.android.hearthisattoptracks.data.model.PopularTracksModel
+import com.omeric.android.hearthisattopartists.data.model.TrackModel
+import com.omeric.android.hearthisattopartists.data.model.PopularTracksModel
 import io.reactivex.Single
 import retrofit2.http.*
 

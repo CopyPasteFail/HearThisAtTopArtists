@@ -1,4 +1,4 @@
-package com.omeric.android.hearthisattoptracks.adapter
+package com.omeric.android.hearthisattopartists.adapter
 
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.RecyclerView
@@ -8,12 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.omeric.android.hearthisattoptracks.R
-import com.omeric.android.hearthisattoptracks.data.model.TrackModel
+import com.omeric.android.hearthisattopartists.R
+import com.omeric.android.hearthisattopartists.data.model.TrackModel
 import com.squareup.picasso.Picasso
-import android.content.Intent
-import com.omeric.android.hearthisattoptracks.activity.DetailsActivity
-import com.omeric.android.hearthisattoptracks.activity.MainActivity
+import com.omeric.android.hearthisattopartists.activity.MainActivity
 
 
 class MoviesAdapter(
@@ -34,7 +32,9 @@ class MoviesAdapter(
     {
         internal var movieItemLayout: ConstraintLayout = view.findViewById(R.id.movie_item_layout)
         internal var movieTitle: TextView = view.findViewById(R.id.title_list_item)
-        internal var releaseDate: TextView = view.findViewById(R.id.TextVw_release_date_list_item)
+        internal var playbackCount: TextView = view.findViewById(R.id.textVw_playback_count_list_item)
+        internal var downloadCount: TextView = view.findViewById(R.id.textVw_download_count_list_item2)
+        internal var favoritingsCount: TextView = view.findViewById(R.id.textVw_favoritings_count_list_item)
         internal var posterImage: ImageView = view.findViewById(R.id.poster_image_list_item)
     }
 
@@ -52,22 +52,25 @@ class MoviesAdapter(
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int)
     {
 //        Log.d(TAG,"onBindViewHolder:")
-        if (tracks[position].posterPath != null)
+        if (tracks[position].user?.avatarUrl != null)
         {
 //            Log.d(TAG, "onBindViewHolder: posterUrl = ${MainActivity.BASE_URL_MOVIE_POSTER + tracks[position].posterPath}")
             Picasso
                 .get()
-                .load(MainActivity.BASE_URL_MOVIE_POSTER + tracks[position].posterPath)
+                .load(MainActivity.BASE_URL_MOVIE_POSTER + tracks[position].user!!.avatarUrl)
                 .placeholder(android.R.drawable.sym_def_app_icon)
                 .error(android.R.drawable.stat_notify_error)
                 .into(holder.posterImage)
         }
         else {holder.posterImage.setImageResource(android.R.drawable.ic_menu_close_clear_cancel)}
 
-        holder.movieTitle.text = tracks[position].originalTitle
-        holder.releaseDate.text = tracks[position].releaseDate
+        holder.movieTitle.text = tracks[position].user!!.username
+        holder.playbackCount.text = tracks[position].playbackCount
+        holder.downloadCount.text = tracks[position].downloadCount
+        holder.favoritingsCount.text = tracks[position].favoritingsCount
 
         holder.movieItemLayout.setOnClickListener {
+/*
             it.context.startActivity(Intent(it.context, DetailsActivity::class.java)
                 .putExtra(DetailsActivity.INTENT_MOVIE_HOMEPAGE_URL, tracks[position].homePageUrl)
                 .putExtra(DetailsActivity.INTENT_MOVIE_ID, tracks[position].id)
@@ -75,10 +78,11 @@ class MoviesAdapter(
                 .putExtra(DetailsActivity.INTENT_MOVIE_OVERVIEW, tracks[position].overview)
                 .putExtra(DetailsActivity.INTENT_MOVIE_POPULARITY, tracks[position].popularity)
                 .putExtra(DetailsActivity.INTENT_MOVIE_POSTER_PATH, tracks[position].posterPath)
-                .putExtra(DetailsActivity.INTENT_MOVIE_RELEASE_DATE, tracks[position].releaseDate)
+                .putExtra(DetailsActivity.INTENT_MOVIE_RELEASE_DATE, tracks[position].downloadCount)
                 .putExtra(DetailsActivity.INTENT_MOVIE_VOTE_AVERAGE, tracks[position].voteAverage)
                 .putExtra(DetailsActivity.INTENT_MOVIE_VOTE_COUNT, tracks[position].voteCount)
             )
+*/
         }
     }
 

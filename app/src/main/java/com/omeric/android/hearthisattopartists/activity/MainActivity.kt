@@ -1,4 +1,4 @@
-package com.omeric.android.hearthisattoptracks.activity
+package com.omeric.android.hearthisattopartists.activity
 
 //TODO - add auto-complete search bar
 import android.support.v7.app.AppCompatActivity
@@ -7,7 +7,7 @@ import android.support.v7.widget.LinearLayoutManager
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import android.util.Log
-import com.omeric.android.hearthisattoptracks.data.remote.HearThisAtApiService
+import com.omeric.android.hearthisattopartists.data.remote.HearThisAtApiService
 import io.reactivex.disposables.Disposable
 import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -18,13 +18,11 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
-import com.omeric.android.hearthisattoptracks.R
-import com.omeric.android.hearthisattoptracks.adapter.MoviesAdapter
-import com.omeric.android.hearthisattoptracks.data.model.PopularTracksModel
-import java.text.SimpleDateFormat
+import com.omeric.android.hearthisattopartists.R
+import com.omeric.android.hearthisattopartists.adapter.MoviesAdapter
 import java.util.*
-import com.omeric.android.hearthisattoptracks.adapter.EndlessRecyclerViewScrollListener
-import com.omeric.android.hearthisattoptracks.data.model.TrackModel
+import com.omeric.android.hearthisattopartists.adapter.EndlessRecyclerViewScrollListener
+import com.omeric.android.hearthisattopartists.data.model.TrackModel
 
 
 class MainActivity : AppCompatActivity()
@@ -33,12 +31,13 @@ class MainActivity : AppCompatActivity()
     {
         private val TAG = "gipsy:" + this::class.java.name
         const val BASE_URL_API = "https://api-v2.hearthis.at/"
-        const val BASE_URL_MOVIE_POSTER = "https://image.tmdb.org/t/p/w185"
-        const val API_KEY = "1e0dcaa7e93980fb84e1d2430d01b887" //junk key
+//        const val BASE_URL_MOVIE_POSTER = "https://image.tmdb.org/t/p/w185"
+        const val BASE_URL_MOVIE_POSTER = "" //TODO - remove this
     }
 
-    //init movies list
-    var movies = arrayListOf<TrackModel>()
+    //init tracks list
+    var tracks = arrayListOf<TrackModel>()
+//    var pageNumber : Int = 1
 
     /**
      * [CompositeDisposable] is a convenient class for bundling up multiple Disposables,
@@ -64,18 +63,15 @@ class MainActivity : AppCompatActivity()
         val linearLayoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = linearLayoutManager
         progressBar = findViewById(R.id.progressbar_main_activity)
-        loadNextDataFromApi(1)
+        loadNextDataFromApi(1) // Load first page
 
         recyclerView.addOnScrollListener(object : EndlessRecyclerViewScrollListener(linearLayoutManager)
         {
             override fun onLoadMore(page: Int, recyclerView: RecyclerView)
             {
-                Log.d(TAG, ":onCreate::recyclerView.addOnScrollListener::onLoadMore")
+                Log.d(TAG, ":onCreate::recyclerView.addOnScrollListener::onLoadMore: page = $page")
                 // New data needs to be appended to the list
-                if ((page + 1) <= totalPages)
-                {
-                    loadNextDataFromApi(page + 1)
-                }
+                loadNextDataFromApi(page)
             }
         })
     }
@@ -144,15 +140,6 @@ class MainActivity : AppCompatActivity()
      */
     fun loadNextDataFromApi(page: Int)
     {
-        // TODO - what happens when the date changes while the user is using the app?
-        //get current date and
-        val time = Calendar.getInstance().time
-        Log.d(TAG, ":loadNextDataFromApi:: Current time => $time")
-        //convert to the format yyyy-MM-dd
-        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-        val formattedDate = simpleDateFormat.format(time)
-        Log.d(TAG, ":loadNextDataFromApi:: formattedDate = $formattedDate")
-
         // Trailing slash is needed
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL_API)
@@ -161,40 +148,40 @@ class MainActivity : AppCompatActivity()
             .build()
 
         // create an instance of the HearThisAtApiService
-        val tmdbApiService = retrofit.create(HearThisAtApiService::class.java)
-        //example: https://api.themoviedb.org/3/discover/movie?api_key=1e0dcaa7e93980fb84e1d2430d01b887&language=en-US&sort_by=release_date.desc&include_adult=false&include_video=false&page=1&primary_release_date.lte=2013-08-30
-        tmdbApiService.getPopularTracks(API_KEY, "en-US", "release_date.desc", "false",
-            "false", page, formattedDate)
+        val hearThisAtApiService = retrofit.create(HearThisAtApiService::class.java)
+        //example: https://api-v2.hearthis.at/feed/?type=popular&page=1&count=20
+        hearThisAtApiService.getPopularTracks("popular", page, 20)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : SingleObserver<PopularTracksModel>
+            .subscribe(object : SingleObserver<ArrayList<TrackModel> /*PopularTracksModel*/>
             {
                 override fun onSubscribe(disposable: Disposable)
                 {
-                    Log.d(TAG, " tmdbApiService.getPopularTracks::onSubscribe")
+                    Log.d(TAG, " hearThisAtApiService.getPopularTracks::onSubscribe")
                     add(disposable)
                     showProgressBar()
                 }
 
                 // data is ready and we can update the UI
-                override fun onSuccess(popularTracksModel : PopularTracksModel)
+                override fun onSuccess(trackModelList : ArrayList<TrackModel> /*PopularTracksModel*/)
                 {
-                    // for the first page we connect the adapter and the movies list
-                    if (page == 1) {
-                        Log.d(TAG, "tmdbApiService.getPopularTracks::onSuccess: page #${popularTracksModel.page} loaded successfully")
-                        totalPages = popularTracksModel.totalPages!!
+                    // for the first page we connect the adapter and the tracks list
+                    if (page == 1)
+                    {
+                        Log.d(TAG, "hearThisAtApiService.getPopularTracks::onSuccess: page #$page loaded successfully")
+//                        totalPages = trackModelList.totalPages!!
 
-                        movies = popularTracksModel.results!!
+                        tracks = trackModelList
 
                         /** Hooking up [MoviesAdapter] and [recyclerView] */
-                        recyclerView.adapter = MoviesAdapter(movies, R.layout.list_item_movie)
+                        recyclerView.adapter = MoviesAdapter(tracks, R.layout.list_item_movie)
                         hideProgressBar()
                     }
                     else
                     {
                         // for any further pages, we append the data and notify the adapter on the change
-                        Log.d(TAG, "tmdbApiService.getPopularTracks::onSuccess: page #${popularTracksModel.page} loaded successfully")
-                        movies.addAll(popularTracksModel.results!!)
+                        Log.d(TAG, "hearThisAtApiService.getPopularTracks::onSuccess: page #$page loaded successfully")
+                        tracks.addAll(trackModelList)
                         recyclerView.adapter!!.notifyDataSetChanged()
 
                         hideProgressBar()
@@ -204,8 +191,8 @@ class MainActivity : AppCompatActivity()
                 override fun onError(e: Throwable)
                 {
                     // oops, we best show some error message
-                    Log.e(TAG, " tmdbApiService.getPopularTracks::onError: $e")
-                    Toast.makeText(this@MainActivity, "Error connecting to TMDb", Toast.LENGTH_SHORT).show()
+                    Log.e(TAG, " hearThisAtApiService.getPopularTracks::onError: $e")
+                    Toast.makeText(this@MainActivity, "Error connecting to HearThisAt", Toast.LENGTH_SHORT).show()
                     hideProgressBar()
                 }
             })

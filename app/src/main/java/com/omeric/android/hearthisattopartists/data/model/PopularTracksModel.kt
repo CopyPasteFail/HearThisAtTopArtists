@@ -1,4 +1,4 @@
-package com.omeric.android.hearthisattoptracks.data.model
+package com.omeric.android.hearthisattopartists.data.model
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
