@@ -60,63 +60,18 @@ import com.google.gson.annotations.SerializedName
 
 class TrackModel
 {
-    @SerializedName("id")
-    @Expose
-    var id: String? = null
-    @SerializedName("created_at")
-    @Expose
-    var createdAt: String? = null
-    @SerializedName("user_id")
-    @Expose
-    var userId: String? = null
-    @SerializedName("duration")
-    @Expose
-    var duration: String? = null
-    @SerializedName("permalink")
-    @Expose
-    var permalink: String? = null
-    @SerializedName("description")
-    @Expose
-    var description: String? = null
-    @SerializedName("downloadable")
-    @Expose
-    var downloadable: String? = null
-    @SerializedName("genre")
-    @Expose
-    var genre: String? = null
-    @SerializedName("genre_slush")
-    @Expose
-    var genreSlush: String? = null
     @SerializedName("title")
     @Expose
     var title: String? = null
-    @SerializedName("uri")
-    @Expose
-    var uri: String? = null
-    @SerializedName("permalink_url")
-    @Expose
-    var permalinkUrl: String? = null
     @SerializedName("artwork_url")
     @Expose
     var artworkUrl: String? = null
-    @SerializedName("background_url")
-    @Expose
-    var backgroundUrl: String? = null
-    @SerializedName("waveform_data")
-    @Expose
-    var waveformData: String? = null
-    @SerializedName("waveform_url")
-    @Expose
-    var waveformUrl: String? = null
     @SerializedName("user")
     @Expose
     var user: User? = null
     @SerializedName("stream_url")
     @Expose
     var streamUrl: String? = null
-    @SerializedName("download_url")
-    @Expose
-    var downloadUrl: String? = null
     @SerializedName("playback_count")
     @Expose
     var playbackCount: String? = null
@@ -126,33 +81,12 @@ class TrackModel
     @SerializedName("favoritings_count")
     @Expose
     var favoritingsCount: String? = null
-    @SerializedName("favorited")
-    @Expose
-    var favorited: Boolean? = null
-    @SerializedName("comment_count")
-    @Expose
-    var commentCount: String? = null
 
     class User
     {
-        @SerializedName("id")
-        @Expose
-        var id: String? = null
-        @SerializedName("permalink")
-        @Expose
-        var permalink: String? = null
         @SerializedName("username")
         @Expose
         var username: String? = null
-        @SerializedName("caption")
-        @Expose
-        var caption: String? = null
-        @SerializedName("uri")
-        @Expose
-        var uri: String? = null
-        @SerializedName("permalink_url")
-        @Expose
-        var permalinkUrl: String? = null
         @SerializedName("avatar_url")
         @Expose
         var avatarUrl: String? = null

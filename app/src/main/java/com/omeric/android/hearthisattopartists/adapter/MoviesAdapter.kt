@@ -11,7 +11,6 @@ import android.widget.TextView
 import com.omeric.android.hearthisattopartists.R
 import com.omeric.android.hearthisattopartists.data.model.TrackModel
 import com.squareup.picasso.Picasso
-import com.omeric.android.hearthisattopartists.activity.MainActivity
 
 
 abstract class MoviesAdapter(
@@ -57,7 +56,7 @@ abstract class MoviesAdapter(
 //            Log.d(TAG, "onBindViewHolder: posterUrl = ${MainActivity.BASE_URL_MOVIE_POSTER + tracks[position].posterPath}")
             Picasso
                 .get()
-                .load(MainActivity.BASE_URL_MOVIE_POSTER + tracks[position].user!!.avatarUrl)
+                .load(tracks[position].user!!.avatarUrl)
                 .placeholder(android.R.drawable.sym_def_app_icon)
                 .error(android.R.drawable.stat_notify_error)
                 .into(holder.posterImage)
@@ -71,24 +70,7 @@ abstract class MoviesAdapter(
 
         holder.movieItemLayout.setOnClickListener {
             Log.d(TAG,"setOnClickListener:")
-/*
-            val context = holder.itemView.context
-            (context as MainActivity).SetPlayerParams("", "", "")
-*/
             playSongOfArtist(tracks[position].artworkUrl!!, tracks[position].title!!, tracks[position].streamUrl!!)
-/*
-            it.context.startActivity(Intent(it.context, DetailsActivity::class.java)
-                .putExtra(DetailsActivity.INTENT_MOVIE_HOMEPAGE_URL, tracks[position].homePageUrl)
-                .putExtra(DetailsActivity.INTENT_MOVIE_ID, tracks[position].id)
-                .putExtra(DetailsActivity.INTENT_MOVIE_TITLE, tracks[position].originalTitle)
-                .putExtra(DetailsActivity.INTENT_MOVIE_OVERVIEW, tracks[position].overview)
-                .putExtra(DetailsActivity.INTENT_MOVIE_POPULARITY, tracks[position].popularity)
-                .putExtra(DetailsActivity.INTENT_MOVIE_POSTER_PATH, tracks[position].posterPath)
-                .putExtra(DetailsActivity.INTENT_MOVIE_RELEASE_DATE, tracks[position].downloadCount)
-                .putExtra(DetailsActivity.INTENT_MOVIE_VOTE_AVERAGE, tracks[position].voteAverage)
-                .putExtra(DetailsActivity.INTENT_MOVIE_VOTE_COUNT, tracks[position].voteCount)
-            )
-    */
         }
     }
 
@@ -97,6 +79,5 @@ abstract class MoviesAdapter(
         return tracks.size
     }
 
-    // TODO
     abstract fun playSongOfArtist(trackArtworkUrl : String, trackTitle : String, trackDataSourceUrl : String)
 }

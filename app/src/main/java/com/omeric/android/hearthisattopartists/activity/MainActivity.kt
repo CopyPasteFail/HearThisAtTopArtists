@@ -1,10 +1,7 @@
 package com.omeric.android.hearthisattopartists.activity
 
-//TODO - add auto-complete search bar
 import android.media.AudioAttributes
-import android.media.AudioManager
 import android.media.MediaPlayer
-import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -30,6 +27,7 @@ import com.omeric.android.hearthisattopartists.data.model.TrackModel
 import com.squareup.picasso.Picasso
 
 // TODO - prevent user from moving the progress bar while no media is loaded
+// TODO - add auto-complete search bar
 
 
 class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
@@ -38,8 +36,6 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
     {
         private val TAG = "gipsy:" + this::class.java.name
         const val BASE_URL_API = "https://api-v2.hearthis.at/"
-//        const val BASE_URL_MOVIE_POSTER = "https://image.tmdb.org/t/p/w185"
-        const val BASE_URL_MOVIE_POSTER = "" //TODO - remove this
         private const val SKIP_TIME_DURATION_MS = 5000
         private const val GRAYED_OUT = .5f
         private const val UNGRAYED_OUT = 1.0f
@@ -52,7 +48,6 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
 
     //init tracks list
     var tracks = arrayListOf<TrackModel>()
-//    var pageNumber : Int = 1
 
     /**
      * [CompositeDisposable] is a convenient class for bundling up multiple Disposables,
@@ -63,6 +58,7 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
     private lateinit var progressBar: ProgressBar
     private var dataSourceUrl : String = "" // TODO - maybe remove
 
+    // Media player controls
     private lateinit var mediaPlayer: MediaPlayer
     private lateinit var imageButtonPlay: ImageButton
     private lateinit var imageButtonPause: ImageButton
@@ -89,6 +85,7 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
         setContentView(R.layout.activity_main)
 
         recyclerView = findViewById(R.id.recycler_view_main_activity)
+
         /**
          * RecyclerView can perform several optimizations if it can know in advance that changes in adapter
          * content cannot change the size (dimensions) of the RecyclerView itself
@@ -214,13 +211,12 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
                 }
 
                 // data is ready and we can update the UI
-                override fun onSuccess(trackModelList : ArrayList<TrackModel> /*PopularTracksModel*/)
+                override fun onSuccess(trackModelList : ArrayList<TrackModel>)
                 {
                     // for the first page we connect the adapter and the tracks list
                     if (page == 1)
                     {
                         Log.d(TAG, "hearThisAtApiService.getPopularTracks::onSuccess: page #$page loaded successfully")
-//                        totalPages = trackModelList.totalPages!!
 
                         tracks = trackModelList
 
@@ -236,7 +232,7 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
                                 {
                                     Picasso
                                         .get()
-                                        .load(BASE_URL_MOVIE_POSTER + trackArtworkUrl)
+                                        .load(trackArtworkUrl)
                                         .placeholder(android.R.drawable.stat_sys_download) //loading image
                                         .error(android.R.drawable.stat_notify_error)
                                         .into(imageVieArtwork)
@@ -278,7 +274,7 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
                 ).build()
             )
 
-            /* Called when MediaPlayer is ready */
+            /** Called when [MediaPlayer] is ready */
             setOnPreparedListener {
                 Log.d(TAG, ":initMediaPlayer::mediaPlayer::setOnPreparedListener")
                 mediaPlayerState = MediaPlayerState.PREPARED
@@ -286,18 +282,18 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
                 startMediaPlayer()
             }
 
-            /* Called when the playback reaches the end of stream */
+            // Called when the playback reaches the end of stream
             setOnCompletionListener {
                 Log.d(TAG, ":initMediaPlayer::mediaPlayer::setOnCompletionListener")
-                // the MediaPlayer is now in the PlaybackCompleted state
+                /** the [MediaPlayer] is now in the [MediaPlayerState.COMPLETED] state */
                 stopMediaPlayer()
 //                playNext();
             }
         }
     }
 
-        private fun initMediaPlayerListeners()
-        {
+    private fun initMediaPlayerListeners()
+    {
         // Start the media player
         imageButtonPlay.setOnClickListener {
             Log.d(TAG, ":initMediaPlayer::imageButtonPlay::setOnClickListener")
@@ -377,6 +373,8 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
     {
         Log.d(TAG, ":onRestart:")
         super.onRestart()
+
+        // re-init the media player
         initMediaPlayer()
     }
 
@@ -387,6 +385,7 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
         releaseMediaPlayer()
     }
 
+    // When the user switched apps or pressed the home button
     override fun onStop()
     {
         Log.d(TAG, ":onStop:")
@@ -397,7 +396,7 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
     override fun onError(mp: MediaPlayer, what: Int, extra: Int): Boolean
     {
         // ... react appropriately ...
-        // The MediaPlayer has moved to the Error state, must be reset!
+        /** The [MediaPlayer] has moved to the [MediaPlayerState.ERROR] state, must be reset! */
         Log.e(TAG, "MediaPlayer::onError: what = $what, extra = $extra")
         mediaPlayerState = MediaPlayerState.ERROR
         when (what)
@@ -442,7 +441,7 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
 
         removeHandlerCallback()
 
-        // transfers a MediaPlayer object to the Idle state
+        /** transfers a [MediaPlayer] object to the [MediaPlayerState.IDLE] state */
         mediaPlayer.reset()
         mediaPlayerState = MediaPlayerState.IDLE
 
@@ -455,7 +454,7 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
 
         removeHandlerCallback()
 
-        // transfers a MediaPlayer object to the End state
+        /** transfers a [MediaPlayer] object to the [MediaPlayerState.END] state */
         mediaPlayer.release()
         mediaPlayerState = MediaPlayerState.END
         togglePlayVisible()
@@ -542,9 +541,12 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
         else
         {
             togglePlayUnclickable() // Preventing the user from re-clicking
-//            mediaPlayer.setDataSource("http://hearthis.at/shawne/shawne-back-to-the-roots-2-05072014/listen/")
             mediaPlayer.setDataSource(dataSourceUrl)
             // transfers a MediaPlayer object in the Idle state to the Initialized state
+            /**
+             * transfers a [MediaPlayer] object in the [MediaPlayerState.IDLE] state to the
+             * [MediaPlayerState.INITIALIZED] state
+             * */
             mediaPlayerState = MediaPlayerState.INITIALIZED
             mediaPlayer.prepareAsync()
             mediaPlayerState = MediaPlayerState.PREPARING
