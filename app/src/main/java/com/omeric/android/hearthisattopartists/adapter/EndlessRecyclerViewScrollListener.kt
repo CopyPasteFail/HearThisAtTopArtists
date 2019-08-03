@@ -2,7 +2,6 @@ package com.omeric.android.hearthisattopartists.adapter
 
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 
 
 /**
@@ -10,11 +9,6 @@ import android.util.Log
  */
 abstract class EndlessRecyclerViewScrollListener(layoutManager: LinearLayoutManager) : RecyclerView.OnScrollListener()
 {
-    companion object
-    {
-        private val TAG = "gipsy:" + this::class.java.name
-    }
-
     // The minimum amount of items to have below your current scroll position
     // before loading more.
     private var visibleThreshold = 5
@@ -28,11 +22,6 @@ abstract class EndlessRecyclerViewScrollListener(layoutManager: LinearLayoutMana
     private var currentPage = startingPageIndex
 
     private val mLayoutManager: RecyclerView.LayoutManager = layoutManager
-
-    init
-    {
-        Log.d(TAG, "::init")
-    }
 
     /**
      * Callback method to be invoked when the RecyclerView has been scrolled.
@@ -52,12 +41,6 @@ abstract class EndlessRecyclerViewScrollListener(layoutManager: LinearLayoutMana
     {
         val lastVisibleItemPosition: Int = (mLayoutManager as LinearLayoutManager).findLastVisibleItemPosition()
         val totalItemCount = mLayoutManager.itemCount
-        Log.d(TAG, "::onScrolled: lastVisibleItemPosition = $lastVisibleItemPosition")
-        Log.d(TAG, "::onScrolled: previousTotalItemCount = $previousTotalItemCount")
-        Log.d(TAG, "::onScrolled: totalItemCount = $totalItemCount")
-        Log.d(TAG, "::onScrolled: visibleThreshold = $visibleThreshold")
-        Log.d(TAG, "::onScrolled: currentPage = $currentPage")
-        Log.d(TAG, "::onScrolled: loading = $loading")
 
         /**
          * If the total item count is zero and the previous isn't, assume the
@@ -103,7 +86,6 @@ abstract class EndlessRecyclerViewScrollListener(layoutManager: LinearLayoutMana
          */
         if (!loading && (lastVisibleItemPosition + visibleThreshold > totalItemCount))
         {
-            Log.d(TAG, "::onScrolled: (!loading && (lastVisibleItemPosition + visibleThreshold > totalItemCount)) = true")
             currentPage++
             onLoadMore(currentPage, recyclerView)
             loading = true
@@ -113,7 +95,6 @@ abstract class EndlessRecyclerViewScrollListener(layoutManager: LinearLayoutMana
     // Call this method whenever performing new searches
     fun resetState()
     {
-        Log.d(TAG, ":resetState")
         this.currentPage = this.startingPageIndex
         this.previousTotalItemCount = 0
         this.loading = true

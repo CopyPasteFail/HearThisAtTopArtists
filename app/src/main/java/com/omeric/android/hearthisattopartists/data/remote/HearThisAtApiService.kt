@@ -11,7 +11,6 @@ import retrofit2.http.*
  */
 interface HearThisAtApiService
 {
-    //example: https://api-v2.hearthis.at/feed/?type=popular&page=1&count=20
     @GET("feed\n")
     fun getPopularTracks(
         @Query("type") type: String, //popular

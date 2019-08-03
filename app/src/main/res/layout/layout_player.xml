@@ -90,15 +90,6 @@
         app:layout_constraintTop_toBottomOf="@+id/seek_bar">
 
         <ImageButton
-            android:id="@+id/imgBtn_media_previous"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/transparent"
-            android:contentDescription="@string/media_previous"
-            android:src="@android:drawable/ic_media_previous"
-            android:tint="@color/black" />
-
-        <ImageButton
             android:id="@+id/imgBtn_media_rewind"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -133,15 +124,6 @@
             android:background="@color/transparent"
             android:contentDescription="@string/media_forwards"
             android:src="@android:drawable/ic_media_ff"
-            android:tint="@color/black" />
-
-        <ImageButton
-            android:id="@+id/imgBtn_media_next"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/transparent"
-            android:contentDescription="@string/media_next"
-            android:src="@android:drawable/ic_media_next"
             android:tint="@color/black" />
     </LinearLayout>
 

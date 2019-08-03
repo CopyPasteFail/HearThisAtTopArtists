@@ -8,7 +8,6 @@ import android.os.Handler
 import android.support.v7.widget.LinearLayoutManager
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import android.util.Log
 import com.omeric.android.hearthisattopartists.data.remote.HearThisAtApiService
 import io.reactivex.disposables.Disposable
 import io.reactivex.SingleObserver
@@ -26,15 +25,11 @@ import com.omeric.android.hearthisattopartists.adapter.EndlessRecyclerViewScroll
 import com.omeric.android.hearthisattopartists.data.model.TrackModel
 import com.squareup.picasso.Picasso
 
-// TODO - prevent user from moving the progress bar while no media is loaded
-// TODO - add auto-complete search bar
-
 
 class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
 {
     companion object
     {
-        private val TAG = "gipsy:" + this::class.java.name
         const val BASE_URL_API = "https://api-v2.hearthis.at/"
         private const val SKIP_TIME_DURATION_MS = 5000
         private const val GRAYED_OUT = .5f
@@ -43,7 +38,7 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
 
     enum class MediaPlayerState
     {
-        IDLE, INITIALIZED, PREPARING, PREPARED, STARTED, PAUSED, COMPLETED, STOPPED, ERROR, END
+        IDLE, INITIALIZED, PREPARING, PREPARED, STARTED, PAUSED, COMPLETED, ERROR, END
     }
 
     //init tracks list
@@ -56,16 +51,14 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
     private var compositeDisposable: CompositeDisposable? = null
     private lateinit var recyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
-    private var dataSourceUrl : String = "" // TODO - maybe remove
+    private var dataSourceUrl : String = ""
 
     // Media player controls
     private lateinit var mediaPlayer: MediaPlayer
     private lateinit var imageButtonPlay: ImageButton
     private lateinit var imageButtonPause: ImageButton
-    private lateinit var imageButtonPrevious : ImageButton
     private lateinit var imageButtonRewind : ImageButton
     private lateinit var imageButtonForwards : ImageButton
-    private lateinit var imageButtonNext : ImageButton
 
     private lateinit var textViewPass: TextView
     private lateinit var textViewDuration: TextView
@@ -81,7 +74,6 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
-        Log.d(TAG, ":onCreate")
         setContentView(R.layout.activity_main)
 
         recyclerView = findViewById(R.id.recycler_view_main_activity)
@@ -96,12 +88,10 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
         progressBar = findViewById(R.id.progressbar_main_activity)
         loadNextDataFromApi(1) // Load first page
 
-        imageButtonPrevious = findViewById(R.id.imgBtn_media_previous)
         imageButtonRewind = findViewById(R.id.imgBtn_media_rewind)
         imageButtonPlay = findViewById(R.id.imgBtn_media_play)
         imageButtonPause = findViewById(R.id.imgBtn_media_pause)
         imageButtonForwards = findViewById(R.id.imgBtn_media_forwards)
-        imageButtonNext = findViewById(R.id.imgBtn_media_next)
         mediaPlayerSeekBar = findViewById(R.id.seek_bar)
         imageVieArtwork = findViewById(R.id.imgVw_artwork)
         textViewPass = findViewById(R.id.textVw_passed)
@@ -117,7 +107,6 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
         {
             override fun onLoadMore(page: Int, recyclerView: RecyclerView)
             {
-                Log.d(TAG, ":onCreate::recyclerView.addOnScrollListener::onLoadMore: page = $page")
                 // New data needs to be appended to the list
                 loadNextDataFromApi(page)
             }
@@ -126,7 +115,6 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
 
     override fun onDestroy()
     {
-        Log.d(TAG, ":onDestroy")
         /** dispose all [Disposable]s */
         if (compositeDisposable?.isDisposed == false)
         {
@@ -149,7 +137,6 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
      */
     fun add(disposable: Disposable)
     {
-        Log.d(TAG, ":add")
         if (compositeDisposable == null)
         {
             compositeDisposable = CompositeDisposable()
@@ -162,7 +149,6 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
      */
     private fun hideProgressBar()
     {
-        Log.d(TAG, "::hideProgressBar:")
         progressBar.visibility = View.INVISIBLE
         recyclerView.visibility = View.VISIBLE
     }
@@ -172,7 +158,6 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
      */
     private fun showProgressBar()
     {
-        Log.d(TAG, "::hideProgressBar:")
         progressBar.visibility = View.VISIBLE
         recyclerView.visibility = View.INVISIBLE
     }
@@ -197,7 +182,7 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
 
         // create an instance of the HearThisAtApiService
         val hearThisAtApiService = retrofit.create(HearThisAtApiService::class.java)
-        //example: https://api-v2.hearthis.at/feed/?type=popular&page=1&count=20
+
         hearThisAtApiService.getPopularTracks("popular", page, 20)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -205,7 +190,6 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
             {
                 override fun onSubscribe(disposable: Disposable)
                 {
-                    Log.d(TAG, " hearThisAtApiService.getPopularTracks::onSubscribe")
                     add(disposable)
                     showProgressBar()
                 }
@@ -216,8 +200,6 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
                     // for the first page we connect the adapter and the tracks list
                     if (page == 1)
                     {
-                        Log.d(TAG, "hearThisAtApiService.getPopularTracks::onSuccess: page #$page loaded successfully")
-
                         tracks = trackModelList
 
                         /** Hooking up [MoviesAdapter] and [recyclerView] */
@@ -245,7 +227,6 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
                     else
                     {
                         // for any further pages, we append the data and notify the adapter on the change
-                        Log.d(TAG, "hearThisAtApiService.getPopularTracks::onSuccess: page #$page loaded successfully")
                         tracks.addAll(trackModelList)
                         recyclerView.adapter!!.notifyDataSetChanged()
 
@@ -256,7 +237,6 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
                 override fun onError(e: Throwable)
                 {
                     // oops, we best show some error message
-                    Log.e(TAG, " hearThisAtApiService.getPopularTracks::onError: $e")
                     Toast.makeText(this@MainActivity, "Error connecting to HearThisAt", Toast.LENGTH_SHORT).show()
                     hideProgressBar()
                 }
@@ -265,8 +245,6 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
 
     private fun initMediaPlayer()
     {
-        Log.d(TAG, ":initMediaPlayer")
-
         mediaPlayer = MediaPlayer().apply {
             setAudioAttributes(
                 AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).setContentType(
@@ -276,7 +254,6 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
 
             /** Called when [MediaPlayer] is ready */
             setOnPreparedListener {
-                Log.d(TAG, ":initMediaPlayer::mediaPlayer::setOnPreparedListener")
                 mediaPlayerState = MediaPlayerState.PREPARED
 
                 startMediaPlayer()
@@ -284,10 +261,8 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
 
             // Called when the playback reaches the end of stream
             setOnCompletionListener {
-                Log.d(TAG, ":initMediaPlayer::mediaPlayer::setOnCompletionListener")
                 /** the [MediaPlayer] is now in the [MediaPlayerState.COMPLETED] state */
                 stopMediaPlayer()
-//                playNext();
             }
         }
     }
@@ -296,12 +271,10 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
     {
         // Start the media player
         imageButtonPlay.setOnClickListener {
-            Log.d(TAG, ":initMediaPlayer::imageButtonPlay::setOnClickListener")
             startPlaying()
         }
 
         imageButtonPause.setOnClickListener {
-            Log.d(TAG, ":initMediaPlayer::imageButtonPause::setOnClickListener")
             if (mediaPlayer.isPlaying)
             {
                 mediaPlayer.pause()
@@ -311,40 +284,28 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
         }
 
         imageButtonForwards.setOnClickListener {
-            Log.d(TAG, ":initMediaPlayer::imageButtonForwards::setOnClickListener")
             val skipToTime = mediaPlayer.currentPosition + SKIP_TIME_DURATION_MS
 
             if (skipToTime <= mediaPlayer.duration)
             {
                 mediaPlayer.seekTo(skipToTime)
-/*
-                Toast.makeText(applicationContext, "You have Jumped forward ${SKIP_TIME_DURATION_MS / 1000} seconds",
-                    Toast.LENGTH_SHORT).show()
-*/
             }
             else
             {
                 mediaPlayer.seekTo(mediaPlayer.duration)
-//                Toast.makeText(applicationContext, "You have Jumped forwards to the end", Toast.LENGTH_SHORT).show()
             }
         }
 
         imageButtonRewind.setOnClickListener {
-            Log.d(TAG, ":initMediaPlayer::imageButtonRewind::setOnClickListener")
             val skipToTime = mediaPlayer.currentPosition - SKIP_TIME_DURATION_MS
 
             if (skipToTime > 0)
             {
                 mediaPlayer.seekTo(skipToTime)
-/*
-                Toast.makeText(applicationContext, "You have Jumped backward ${SKIP_TIME_DURATION_MS / 1000} seconds",
-                    Toast.LENGTH_SHORT).show()
-*/
             }
             else
             {
                 mediaPlayer.seekTo(0)
-//                Toast.makeText(applicationContext, "You have Jumped backwards to the start", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -371,7 +332,6 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
 
     override fun onRestart()
     {
-        Log.d(TAG, ":onRestart:")
         super.onRestart()
 
         // re-init the media player
@@ -380,7 +340,6 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
 
     override fun onPause()
     {
-        Log.d(TAG, ":onPause:")
         super.onPause()
         releaseMediaPlayer()
     }
@@ -388,7 +347,6 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
     // When the user switched apps or pressed the home button
     override fun onStop()
     {
-        Log.d(TAG, ":onStop:")
         super.onStop()
         releaseMediaPlayer()
     }
@@ -397,37 +355,16 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
     {
         // ... react appropriately ...
         /** The [MediaPlayer] has moved to the [MediaPlayerState.ERROR] state, must be reset! */
-        Log.e(TAG, "MediaPlayer::onError: what = $what, extra = $extra")
         mediaPlayerState = MediaPlayerState.ERROR
-        when (what)
-        {
-            MediaPlayer.MEDIA_ERROR_UNKNOWN     -> Log.e(TAG, "MediaPlayer::onError: unknown media playback error")
-            MediaPlayer.MEDIA_ERROR_SERVER_DIED ->
-            {
-                Log.e(TAG, "MediaPlayer::onError: server connection died")
-            }
-            else                                -> Log.e(TAG, "MediaPlayer::onError: generic audio playback error")
-        }
-
-        when (extra)
-        {
-            MediaPlayer.MEDIA_ERROR_IO          -> Log.e(TAG, "MediaPlayer::onError: IO media error")
-            MediaPlayer.MEDIA_ERROR_MALFORMED   -> Log.e(TAG, "MediaPlayer::onError: media error, malformed")
-            MediaPlayer.MEDIA_ERROR_UNSUPPORTED -> Log.e(TAG, "MediaPlayer::onError: unsupported media content")
-            MediaPlayer.MEDIA_ERROR_TIMED_OUT   -> Log.e(TAG, "MediaPlayer::onError: media timeout error")
-            else                                -> Log.e(TAG, "MediaPlayer::onError: unknown playback error")
-        }
         Toast.makeText(this, applicationContext.getString(R.string.error_mediaplayer), Toast.LENGTH_SHORT).show()
         return false
     }
 
     private fun startMediaPlayer()
     {
-        Log.d(TAG, ":startMediaPlayer:")
         mediaPlayer.start()
         mediaPlayerState = MediaPlayerState.STARTED
 
-//        textViewDuration.text = "${mediaPlayer.duration/1000/60}:${mediaPlayer.duration/1000 % 60}"
         textViewDuration.text = convertToMinAndSec(mediaPlayer.durationSeconds)
         initializeSeekBar()
 
@@ -437,8 +374,6 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
     // Stop the media player
     private fun stopMediaPlayer()
     {
-        Log.d(TAG, ":stopMediaPlayer:")
-
         removeHandlerCallback()
 
         /** transfers a [MediaPlayer] object to the [MediaPlayerState.IDLE] state */
@@ -450,8 +385,6 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
 
     private fun releaseMediaPlayer()
     {
-        Log.d(TAG, ":releaseMediaPlayer:")
-
         removeHandlerCallback()
 
         /** transfers a [MediaPlayer] object to the [MediaPlayerState.END] state */
@@ -496,7 +429,6 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
     // Method to initialize seek bar and audio stats
     private fun initializeSeekBar()
     {
-        Log.d(TAG, ":initializeSeekBar:")
         mediaPlayerSeekBar.max = mediaPlayer.durationSeconds
 
         runnable = Runnable{
@@ -526,13 +458,11 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
     // Extension property to convert seconds to compound duration - mm:ss
     private fun convertToMinAndSec(timeSeconds: Int): String
     {
-//        Log.d(TAG, ":convertToMinAndSec:")
         return "${timeSeconds/60}:"+"%02d".format(timeSeconds % 60)
     }
 
     private fun startPlaying()
     {
-        Log.d(TAG, ":startPlaying: dataSourceUrl = $dataSourceUrl")
         if (dataSourceUrl.isEmpty()) return
         if (mediaPlayerState == MediaPlayerState.PREPARED || mediaPlayerState == MediaPlayerState.PAUSED)
         {
