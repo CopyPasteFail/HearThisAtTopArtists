@@ -10,14 +10,16 @@
     <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view_main_activity"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:background="@android:color/darker_gray"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/media_player"
             android:scrollbars="vertical"/>
 
-    <include android:id="@+id/news_title"
+    <include android:id="@+id/media_player"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             layout="@layout/activity_player"
+             layout="@layout/layout_player"
              app:layout_constraintBottom_toBottomOf="parent"/>
 
     <ProgressBar

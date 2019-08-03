@@ -14,7 +14,7 @@ import com.squareup.picasso.Picasso
 import com.omeric.android.hearthisattopartists.activity.MainActivity
 
 
-class MoviesAdapter(
+abstract class MoviesAdapter(
     private val tracks: ArrayList<TrackModel>,
     private val rowLayout: Int
 ) : RecyclerView.Adapter<MoviesAdapter.MovieViewHolder>()
@@ -70,6 +70,12 @@ class MoviesAdapter(
         holder.favoritingsCount.text = tracks[position].favoritingsCount
 
         holder.movieItemLayout.setOnClickListener {
+            Log.d(TAG,"setOnClickListener:")
+/*
+            val context = holder.itemView.context
+            (context as MainActivity).SetPlayerParams("", "", "")
+*/
+            playSongOfArtist(tracks[position].artworkUrl!!, tracks[position].title!!, tracks[position].streamUrl!!)
 /*
             it.context.startActivity(Intent(it.context, DetailsActivity::class.java)
                 .putExtra(DetailsActivity.INTENT_MOVIE_HOMEPAGE_URL, tracks[position].homePageUrl)
@@ -82,7 +88,7 @@ class MoviesAdapter(
                 .putExtra(DetailsActivity.INTENT_MOVIE_VOTE_AVERAGE, tracks[position].voteAverage)
                 .putExtra(DetailsActivity.INTENT_MOVIE_VOTE_COUNT, tracks[position].voteCount)
             )
-*/
+    */
         }
     }
 
@@ -90,4 +96,7 @@ class MoviesAdapter(
     {
         return tracks.size
     }
+
+    // TODO
+    abstract fun playSongOfArtist(trackArtworkUrl : String, trackTitle : String, trackDataSourceUrl : String)
 }

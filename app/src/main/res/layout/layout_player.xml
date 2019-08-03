@@ -5,61 +5,91 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorGreyLight"
-    tools:layout_editor_absoluteY="81dp">
+    android:layout_height="wrap_content"
+    android:background="@color/colorGreyLight">
+    <!--tools:layout_editor_absoluteY="81dp">-->
     <!--tools:context=".MainActivity"-->
+
+    <ImageView
+            android:id="@+id/imgVw_artwork"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="8dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/layout_media_controls"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintVertical_bias="0.5"
+            tools:ignore="ContentDescription"/>
+
+    <TextView
+        android:id="@+id/textVw_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:lines="1"
+        android:gravity="center_horizontal"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:paddingBottom="16dp"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="@id/seek_bar"
+        app:layout_constraintEnd_toEndOf="@id/seek_bar"
+        tools:text="Shawne @ Back To The Roots 2 (05.07.2014)" />
 
     <TextView
         android:id="@+id/textVw_passed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/seek_bar"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintTop_toBottomOf="@id/textVw_title"
+        app:layout_constraintBottom_toTopOf="@+id/seek_bar"
         app:layout_constraintStart_toEndOf="@+id/textVw_duration"
+        app:layout_constraintEnd_toEndOf="@id/seek_bar"
         tools:text="35 sec" />
 
     <TextView
         android:id="@+id/textVw_duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toStartOf="@+id/textVw_passed"
         app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintTop_toBottomOf="@id/textVw_title"
+        app:layout_constraintBottom_toTopOf="@+id/seek_bar"
         app:layout_constraintStart_toEndOf="@+id/textVw_remaining"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/textVw_passed"
         tools:text="45 sec" />
 
     <TextView
         android:id="@+id/textVw_remaining"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/seek_bar"
-        app:layout_constraintEnd_toStartOf="@+id/textVw_duration"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textVw_title"
+        app:layout_constraintBottom_toTopOf="@+id/seek_bar"
+        app:layout_constraintStart_toStartOf="@id/seek_bar"
+        app:layout_constraintEnd_toStartOf="@+id/textVw_duration"
         tools:text="10 sec" />
 
     <SeekBar
         android:id="@+id/seek_bar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textVw_passed"
         android:saveEnabled="false"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textVw_duration" />
+        app:layout_constraintStart_toEndOf="@id/imgVw_artwork"
+        app:layout_constraintTop_toBottomOf="@+id/textVw_duration"/>
 
     <LinearLayout
-        android:id="@+id/layout_media_player"
+        android:id="@+id/layout_media_controls"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:gravity="center"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/seek_bar"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/seek_bar"
         app:layout_constraintTop_toBottomOf="@+id/seek_bar">
 
         <ImageButton

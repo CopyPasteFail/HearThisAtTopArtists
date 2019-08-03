@@ -27,9 +27,12 @@ import com.omeric.android.hearthisattopartists.adapter.MoviesAdapter
 import java.util.*
 import com.omeric.android.hearthisattopartists.adapter.EndlessRecyclerViewScrollListener
 import com.omeric.android.hearthisattopartists.data.model.TrackModel
+import com.squareup.picasso.Picasso
+
+// TODO - prevent user from moving the progress bar while no media is loaded
 
 
-class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener/*, MediaPlayer.OnPreparedListener*/
+class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
 {
     companion object
     {
@@ -58,7 +61,7 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener/*, MediaPl
     private var compositeDisposable: CompositeDisposable? = null
     private lateinit var recyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
-    private var totalPages = 0
+    private var dataSourceUrl : String = "" // TODO - maybe remove
 
     private lateinit var mediaPlayer: MediaPlayer
     private lateinit var imageButtonPlay: ImageButton
@@ -72,6 +75,9 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener/*, MediaPl
     private lateinit var textViewDuration: TextView
     private lateinit var textViewDue: TextView
     private lateinit var mediaPlayerSeekBar: SeekBar
+    private lateinit var imageVieArtwork : ImageView
+    private lateinit var textViewTitle: TextView
+
     private lateinit var runnable: Runnable
     private var handler: Handler = Handler()
     private var mediaPlayerState: MediaPlayerState = MediaPlayerState.IDLE
@@ -100,11 +106,15 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener/*, MediaPl
         imageButtonForwards = findViewById(R.id.imgBtn_media_forwards)
         imageButtonNext = findViewById(R.id.imgBtn_media_next)
         mediaPlayerSeekBar = findViewById(R.id.seek_bar)
+        imageVieArtwork = findViewById(R.id.imgVw_artwork)
         textViewPass = findViewById(R.id.textVw_passed)
         textViewDuration = findViewById(R.id.textVw_duration)
         textViewDue = findViewById(R.id.textVw_remaining)
+        textViewTitle = findViewById(R.id.textVw_title)
 
         initMediaPlayer()
+        initMediaPlayerListeners()
+        togglePlayUnclickable() // Playing starts when the user clicks on an artist
 
         recyclerView.addOnScrollListener(object : EndlessRecyclerViewScrollListener(linearLayoutManager)
         {
@@ -215,7 +225,25 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener/*, MediaPl
                         tracks = trackModelList
 
                         /** Hooking up [MoviesAdapter] and [recyclerView] */
-                        recyclerView.adapter = MoviesAdapter(tracks, R.layout.list_item_movie)
+                        recyclerView.adapter = (object : MoviesAdapter(tracks, R.layout.list_item_movie)
+                        {
+                            override fun playSongOfArtist(trackArtworkUrl : String, trackTitle : String, trackDataSourceUrl : String)
+                            {
+                                stopMediaPlayer()
+                                dataSourceUrl = trackDataSourceUrl
+                                textViewTitle.text = trackTitle
+                                if (trackArtworkUrl.isNotEmpty())
+                                {
+                                    Picasso
+                                        .get()
+                                        .load(BASE_URL_MOVIE_POSTER + trackArtworkUrl)
+                                        .placeholder(android.R.drawable.stat_sys_download) //loading image
+                                        .error(android.R.drawable.stat_notify_error)
+                                        .into(imageVieArtwork)
+                                }
+                                startPlaying()
+                            }
+                        })
                         hideProgressBar()
                     }
                     else
@@ -244,8 +272,11 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener/*, MediaPl
         Log.d(TAG, ":initMediaPlayer")
 
         mediaPlayer = MediaPlayer().apply {
-                setAudioAttributes(AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).setContentType(
-                    AudioAttributes.CONTENT_TYPE_MUSIC).build())
+            setAudioAttributes(
+                AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).setContentType(
+                    AudioAttributes.CONTENT_TYPE_MUSIC
+                ).build()
+            )
 
             /* Called when MediaPlayer is ready */
             setOnPreparedListener {
@@ -263,12 +294,14 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener/*, MediaPl
 //                playNext();
             }
         }
+    }
 
+        private fun initMediaPlayerListeners()
+        {
         // Start the media player
         imageButtonPlay.setOnClickListener {
             Log.d(TAG, ":initMediaPlayer::imageButtonPlay::setOnClickListener")
             startPlaying()
-
         }
 
         imageButtonPause.setOnClickListener {
@@ -339,6 +372,14 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener/*, MediaPl
             }
         })
     }
+
+    override fun onRestart()
+    {
+        Log.d(TAG, ":onRestart:")
+        super.onRestart()
+        initMediaPlayer()
+    }
+
     override fun onPause()
     {
         Log.d(TAG, ":onPause:")
@@ -445,7 +486,7 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener/*, MediaPl
         imageButtonPlay.alpha = UNGRAYED_OUT
     }
 
-        private fun removeHandlerCallback()
+    private fun removeHandlerCallback()
     {
         if (::runnable.isInitialized)
         {
@@ -490,28 +531,23 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener/*, MediaPl
         return "${timeSeconds/60}:"+"%02d".format(timeSeconds % 60)
     }
 
-    private fun startPlaying(url : String)
+    private fun startPlaying()
     {
+        Log.d(TAG, ":startPlaying: dataSourceUrl = $dataSourceUrl")
+        if (dataSourceUrl.isEmpty()) return
         if (mediaPlayerState == MediaPlayerState.PREPARED || mediaPlayerState == MediaPlayerState.PAUSED)
         {
             startMediaPlayer()
         }
         else
         {
-            togglePlayUnclickable()
-            mediaPlayer.setDataSource("http://hearthis.at/shawne/shawne-back-to-the-roots-2-05072014/listen/")
-//            mediaPlayer.setDataSource(url)
+            togglePlayUnclickable() // Preventing the user from re-clicking
+//            mediaPlayer.setDataSource("http://hearthis.at/shawne/shawne-back-to-the-roots-2-05072014/listen/")
+            mediaPlayer.setDataSource(dataSourceUrl)
             // transfers a MediaPlayer object in the Idle state to the Initialized state
             mediaPlayerState = MediaPlayerState.INITIALIZED
             mediaPlayer.prepareAsync()
             mediaPlayerState = MediaPlayerState.PREPARING
-/*
-                firebaseStorage.reference.child("/audio/exercise_5.mp3").downloadUrl.addOnSuccessListener { uri ->
-                    mediaPlayer.setDataSource(uri.toString())
-                    mediaPlayer.prepareAsync()
-                    mediaPlayerState = MediaPlayerState.PREPARING
-                }
-*/
         }
     }
 }
