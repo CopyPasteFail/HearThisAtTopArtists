@@ -1,4 +1,4 @@
-# HearThisAtTopTracks
+# HearThisAtTopArtists
 An android app that shows the top artists from HearThisAt with infinite scrolling and minimalistic audio player.
 
 The app that displays a list of artists and songs using the HeartThisAt API.
@@ -28,7 +28,7 @@ for streaming
 ## Installation
 Clone this repository and import into **Android Studio**
 ```bash
-git clone https://github.com/GipsyBeggar/HearThisAtTopTracks.git
+git clone https://github.com/GipsyBeggar/HearThisAtTopArtists.git
 ```
 
 
