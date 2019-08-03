@@ -1,13 +1,14 @@
 # HearThisAtTopTracks
-An android app that shows the top tracks from HearThisAt with infinite scrolling and minimalistic audio player.
+An android app that shows the top artists from HearThisAt with infinite scrolling and minimalistic audio player.
 
-An app that displays a list of artists and songs using the HeartThisAt API. The first level of content displays a list of top artists (with image and further details, i.e.  track count). When an artist is selected, the corresponding songs (with image and details, i.e. song duration) will be displayed. When a song is selected, the app displays a minimalistic audio player that streams the selected track. The audio should will keep on playing while browsing other artists.  
+The app that displays a list of artists and songs using the HeartThisAt API.
+The first level of content displays a list of top artists (with image and further details, i.e.  track count).
+When an artist is selected, the corresponding song (with image and details, i.e. song duration) will be played.
 
 
 # Introduction
-This Android App that has 2 Screens: 
-1. A list of the latest movies from TMDb 
-2. A simple “Details View” of the movie title clicked on by the user
+This Android App that has 1 Screen: 
+1. A list of the top artists (by top tracks)
 
 
 ## Table of content
@@ -20,13 +21,14 @@ This Android App that has 2 Screens:
 
 
 ## How It Works
-Using Retrofit2 for the network call to TMDb API and RxAndroid for asynchronous calls.
+Using Retrofit2 for the network call to TMDb API and RxAndroid for asynchronous calls, and Android's MediaPlayer
+for streaming
 
 
 ## Installation
 Clone this repository and import into **Android Studio**
 ```bash
-git clone https://github.com/GipsyBeggar/LatestTMDbMovies.git
+git clone https://github.com/GipsyBeggar/HearThisAtTopTracks.git
 ```
 
 
@@ -64,4 +66,15 @@ The following articles and documentations have been used:
 - https://gist.github.com/nesquena/d09dc68ff07e845cc622
 - https://stackoverflow.com/questions/48237141/how-to-infinite-scroll-load-more-with-recycleview
 
-
+### MediaPlayer
+- https://medium.com/@ssaurel/implement-audio-streaming-in-android-applications-8758d3bc62f1
+- https://developer.android.com/reference/kotlin/android/media/MediaPlayer#StateDiagram
+- https://developer.android.com/guide/topics/media/mediaplayer
+- https://developer.android.com/reference/android/media/MediaPlayer
+- https://coding180.com/kotlin-android/playing-pausing-resuming-and-stopping-an-audio-file/
+- https://coding180.com/kotlin-android/playback-file-located-on-the-internet/
+- https://medium.com/androiddevelopers/building-a-simple-audio-app-in-android-part-1-3-c14d1a66e0f1
+- https://android--code.blogspot.com/2018/05/android-kotlin-media-player-seekbar.html
+- https://www.tutorialspoint.com/android/android_mediaplayer.htm
+- https://code.tutsplus.com/tutorials/create-a-music-player-on-android-user-controls--mobile-22787
+- https://developer.android.com/guide/topics/media/media-formats

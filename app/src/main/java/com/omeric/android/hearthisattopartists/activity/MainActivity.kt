@@ -542,7 +542,6 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnErrorListener
         {
             togglePlayUnclickable() // Preventing the user from re-clicking
             mediaPlayer.setDataSource(dataSourceUrl)
-            // transfers a MediaPlayer object in the Idle state to the Initialized state
             /**
              * transfers a [MediaPlayer] object in the [MediaPlayerState.IDLE] state to the
              * [MediaPlayerState.INITIALIZED] state
